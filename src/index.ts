@@ -37,4 +37,5 @@ TwitchAPI.init().then(() => {
 	twitchChat();
     cron().then(() => {});
 	SpotifyAPI.getAuthorizationUrl(host, port);
+	TwitchAPI.getAuthorizationUrl(host, port);
 });

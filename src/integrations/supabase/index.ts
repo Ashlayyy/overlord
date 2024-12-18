@@ -5,7 +5,28 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "";
 
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export  default abstract class Supabase {
+export default abstract class Supabase {
+    
+    static async addExpiryDate(username: string, expiryDate: string) {
+        const { data, error } = await supabaseClient
+            .from('expiry_dates')
+            .insert({ username, expiryDate });
+        if (error) {
+            console.log("Error adding expiry date: ", {error, username, expiryDate});
+        }
+    }
+
+    static async getExpiryDates(): Promise<string[]> {
+        const { data, error } = await supabaseClient
+            .from('expiry_dates')
+            .select('*')
+            .maybeSingle()
+
+        if (error) {
+            console.log("Error getting expiry dates: ", error);
+        }
+        return data;
+    }
 
     static async addSubGift(username: string, giftedTotal: number) {
         const { data, error } = await supabaseClient
@@ -23,7 +44,7 @@ export  default abstract class Supabase {
         if (error) {
             console.log("Error getting announcements: ", error);
         }
-        return announcements!.filter(a => a.expiration_date === null || new Date(a.expiration_date) > new Date());
+        return announcements?.filter(a => a.expiration_date === null || new Date(a.expiration_date) > new Date());
     }
 
     static async getGiftingRegistration(username: string): Promise<boolean> {
